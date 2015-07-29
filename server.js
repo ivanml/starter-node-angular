@@ -2,6 +2,7 @@
 var express        = require('express');
 var app            = express();
 var mongoose       = require('mongoose');
+var morgan = require('morgan');             // log requests to the console (express4)
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 
@@ -9,12 +10,13 @@ var methodOverride = require('method-override');
 	
 // config files
 var db = require('./config/db');
+//mongoose.connect(db.url);
 mongoose.connect(db.url);
 
 var port = process.env.PORT || 8080; // set our port
-// mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
 
 // get all data/stuff of the body (POST) parameters
+app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json()); // parse application/json 
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
