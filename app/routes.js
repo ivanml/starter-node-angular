@@ -24,6 +24,21 @@ function getBills(res){
 		});
 };
 
+function addBill(req, res) {
+	// create a bill, information comes from AJAX request from Angular
+	Bill.create({
+		owner : req.body.owner,
+		amount : req.body.amount,
+		description : req.body.description
+	}, function(err, bill) {
+		if (err)
+			res.send(err);
+
+		// get and return all the bills after you create another
+		getBills(res);
+	});
+};
+
 module.exports = function(app) {
 	// server routes ===========================================================
 	// handle things like api calls
@@ -49,4 +64,9 @@ module.exports = function(app) {
 		res.sendfile('./public/index.html');
 	});
 
+
+	// create bill and send back all bills after creation
+	app.post('/api/bills', function(req, res) {
+		addBill(req, res);
+	});
 };
