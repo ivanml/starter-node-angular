@@ -4,19 +4,65 @@ angular.module('BillCtrl', [])
         $scope.formData = {};
         $scope.loading = true;
 
-        Bills.get()
+        Bills.getPending()
             .success(function(data) {
                 $scope.bills = data;
-                $scope.loading = false;
+                console.log(data);
+            })
+            .error(function(data) {
+                console.log('Error in getting Pending bills: ' + data);
             });
 
-        // CREATE ==================================================================
+        $scope.showBills = function() {
+            if ($scope.formData.allBillCheck == true) {
+                Bills.getAll()
+                    .success(function(data) {
+                        $scope.bills = data;
+                        console.log(data);
+                    })
+                    .error(function(data) {
+                        console.log('Error in getting all bills: ' + data);
+                    });
+            } else {
+                Bills.getPending()
+                    .success(function(data) {
+                        $scope.bills = data;
+                        console.log(data);
+                    })
+                    .error(function(data) {
+                        console.log('Error in getting Pending bills: ' + data);
+                    });
+            }
+        };
+
+        $scope.showPendingBills = function() {
+            Bills.getPending()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting Pending bills: ' + data);
+                });
+        };
+
+        $scope.showAllBills = function() {
+            Bills.getAll()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting all bills: ' + data);
+                });
+        };
+
         // when submitting the add form, send the text to the node API
         $scope.createBills = function() {
 
             // validate the formData to make sure that something is there
             // if form is empty, nothing will happen
-            if ($scope.formData.amount != undefined ||
+            if ($scope.formData.amount != undefined &&
                 $scope.formData.description != undefined) {
                 $scope.loading = true;
 
@@ -27,11 +73,48 @@ angular.module('BillCtrl', [])
                     .success(function(data) {
                         $scope.loading = false;
                         $scope.formData = {}; // clear the form so our user is ready to enter another
-                        $scope.bills = data; // assign our new list of todos
+                        $scope.bills = data; // assign our new list of bills
                     });
             } else {
+                alert("You need to provide both amount and description. ")
                 console.log("form data is incomplete: " + $scope.formData);
             }
+        };
+
+        // delete a bill after checking it
+        $scope.deleteBill = function(id) {
+            Bills.delete(id)
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in deleting bill: ' + data);
+                });
+        };
+
+        // mark the bill as finish, set pending to false
+        $scope.finishBill = function(id) {
+            Bills.finish(id)
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                   console.log('Error in archiving bill: ' + data);
+                });
+        };
+
+        // mark the bill as unfinish, set pending to false
+        $scope.unfinishBill = function(id) {
+            Bills.unfinish(id)
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in unarchiving bill: ' + data);
+                });
         };
 
     }]);

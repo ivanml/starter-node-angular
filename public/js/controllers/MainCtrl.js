@@ -1,5 +1,11 @@
-angular.module('MainCtrl', []).controller('MainController', function($scope) {
+angular.module('MainCtrl', [])
+    .controller('MainController', ['$scope', 'Bills', function($scope, Bills) {
 
-	$scope.tagline = 'To the moon and back!';	
+    Bills.getPending()
+        .success(function(data) {
+            $scope.bills = data;
+            $scope.pending_bill_num = $scope.bills.length;
+            $scope.loading = false;
+        });
 
-});
+}]);

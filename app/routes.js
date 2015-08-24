@@ -13,60 +13,126 @@ function getNerds(res){
 
 var Bill = require('./models/bill');
 
-function getBills(res){
+// get all bills
+function getAllBills(res){
 	Bill.find(function(err, bills) {
-
 			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
 			if (err)
 				res.send(err)
 
-			res.json(bills); // return all bills in JSON format
+            res.json(bills); // return all bills in JSON format
 		});
+};
+
+// get only active bills
+function getPendingBills(res){
+    Bill.find({ pending: true }, function(err, bills) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err)
+            res.send(err)
+
+        res.json(bills);
+    });
 };
 
 function addBill(req, res) {
 	// create a bill, information comes from AJAX request from Angular
 	Bill.create({
-		owner : req.body.owner,
+		owner : req.body.owner == "" ? "Me" : req.body.owner,
 		amount : req.body.amount,
 		description : req.body.description
 	}, function(err, bill) {
 		if (err)
 			res.send(err);
 
-		// get and return all the bills after you create another
-		getBills(res);
+		getPendingBills(res);
 	});
 };
+
+// delete a bill after checking it
+function removeBill(req, res) {
+	Bill.remove(
+        { _id : req.params.bill_id },
+        function(err, bill) {
+		    if (err)
+			    res.send(err);
+
+            getPendingBills(res);
+        });
+}
+
+function closeBill(req, res) {
+    Bill.update(
+        { _id : req.params.bill_id },
+        { $set : { pending: false } },
+        function(err, bills) {
+            if (err)
+                res.send(err);
+
+            getPendingBills(res);
+    });
+}
+
+function openBill(req, res) {
+    Bill.update(
+        { _id : req.params.bill_id },
+        { $set : { pending: true } },
+        function(err, bills) {
+            if (err)
+                res.send(err);
+
+            getPendingBills(res);
+        });
+}
 
 module.exports = function(app) {
 	// server routes ===========================================================
 	// handle things like api calls
 	// authentication routes
-    
-    // api ---------------------------------------------------------------------
+
+
+	// frontend routes =========================================================
 	// get all nerds
 	app.get('/api/nerds', function(req, res) {
 
 		// use mongoose to get all nerds in the database
 		getNerds(res);
 	});
-    
-	app.get('/api/bills', function(req, res) {
-		
+
+	// get all bills
+	app.get('/api/all_bills', function(req, res) {
+
 		// In case of bill route, call getBill()
-		getBills(res);
+		getAllBills(res);
 	});
-    
-	// frontend routes =========================================================
+
+    app.get('/api/pending_bills', function(req, res) {
+        getPendingBills(res);
+    });
+
 	// route to handle all angular requests
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html');
 	});
 
-
 	// create bill and send back all bills after creation
 	app.post('/api/bills', function(req, res) {
 		addBill(req, res);
 	});
+
+	// delete a bill
+	app.delete('/api/bills/:bill_id', function(req, res) {
+		removeBill(req, res);
+	});
+
+    // finish a bill
+    app.delete('/api/bills/finish_bill/:bill_id', function(req, res) {
+        closeBill(req, res);
+    });
+
+    // unfinish a bill
+    app.delete('/api/bills/unfinish_bill/:bill_id', function(req, res) {
+        console.log(req.params.bill_id);
+        openBill(req, res);
+    });
 };

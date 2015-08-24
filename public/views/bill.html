@@ -2,63 +2,82 @@
 	<h1>Pending Bills</h1>
 </div>
 
+<div class="checkbox">
+    <label>
+        <input type="checkbox" name="allBillCheck" ng-model="formData.allBillCheck" ng-click="showBills()"> Show All Bills
+    </label>
+</div>
+
 <div>
-<table class="table table-striped table-bordered table-hover table-condensed">
+<table class="table table-striped table-hover">
     <tr>
         <th>ID</th>
 		<th>Owner</th>
         <th>Amount</th>
         <th>Description</th>
         <th>Add Date</th>
+        <th>Action</th>
     </tr>
-    <tr ng-repeat="bill in bills | orderBy: '-add_date'">
+    <tr ng-repeat="bill in bills | orderBy: '-add_date'" style="vertical-align: middle" ng-class="{danger: (bill.pending == false)}">
         <td>{{ $index + 1 }}</td>
         <td>{{ bill.owner }}</td>
         <td>{{ bill.amount }}</td>
         <td>{{ bill.description }}</td>
         <td>{{ bill.add_date }}</td>
+        <td style="vertical-align: middle">
+            <!--Used for pending bills -->
+            <div class="btn-group" ng-class="{hidden: (bill.pending == false)}">
+                <button type="button" class="btn btn-default btn-sm" ng-click="finishBill(bill._id)">
+                    Archive
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" ng-click="deleteBill(bill._id)" class="small">Delete</a></li>
+                </ul>
+            </div>
+            <!--Used for archived bills -->
+            <div class="btn-group" ng-class="{hidden: (bill.pending == true)}">
+                <button type="button" class="btn btn-default btn-sm" ng-click="deleteBill(bill._id)">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" ng-click="unfinishBill(bill._id)" class="small">Unarchive</a></li>
+                </ul>
+            </div>
+        </td>
     </tr>
     <tr>
-        <td>
-           {{ bills.count }}
+        <td class="text-muted" style="vertical-align: middle">
+            {{ bills.length + 1 }}
         </td>
         <td>
-            <form class="form-group">
-                    <input type="text" class="form-control input-lg" placeholder="who owns this..." ng-model="formData.owner">
-            </form>
+            <input type="text" class="form-control input-xs" placeholder="who owns this..." ng-model="formData.owner">
         </td>
         <td>
-            <form class="form-group">
-                <input type="text" class="form-control input-lg" placeholder="amount due..." ng-model="formData.amount">
-            </form>
+            <input type="text" class="form-control input-xs" placeholder="amount due..." ng-model="formData.amount">
         </td>
         <td>
-            <form class="form-group">
-                <input type="text" class="form-control input-lg" placeholder="what is it about..." ng-model="formData.description">
-            </form>
+            <input type="text" class="form-control input-xs" placeholder="what is it about..." ng-model="formData.description">
         </td>
         <td>
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="createBills()">Add On</button>
+            <input type="text" class="form-control input-xs" placeholder="add date..." disabled>
+        </td>
+        <td style="vertical-align: middle">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-sm" ng-click="createBills()">
+                    Add Bill
+                </button>
+            </div>
+
+
         </td>
     </tr>
 </table>
 </div>
-
-
-<!--
-
-&lt;!&ndash; FORM TO CREATE BILLS &ndash;&gt;
-<div id="bill-form" class="row">
-    <div class="col-sm-8 col-sm-offset-2 text-center">
-        <form>
-            <div class="form-group">
-
-                &lt;!&ndash; BIND THIS VALUE TO formData.text IN ANGULAR &ndash;&gt;
-                <input type="text" class="form-control input-lg text-center" placeholder="create some bills..." ng-model="formData.description">
-            </div>
-
-            &lt;!&ndash; createToDo() WILL CREATE NEW TODOS &ndash;&gt;
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="createBills()">Submit</button>
-        </form>
-    </div>
-</div>-->
