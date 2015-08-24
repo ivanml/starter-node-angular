@@ -45,7 +45,11 @@ function addBill(req, res) {
 		if (err)
 			res.send(err);
 
-		getPendingBills(res);
+        if (req.body.allBillCheck == true) {
+            getAllBills(res);
+        } else {
+		    getPendingBills(res);
+        }
 	});
 };
 

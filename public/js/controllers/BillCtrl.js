@@ -4,17 +4,47 @@ angular.module('BillCtrl', [])
         $scope.formData = {};
         $scope.loading = true;
 
-        Bills.getPending()
-            .success(function(data) {
-                $scope.bills = data;
-                console.log(data);
-            })
-            .error(function(data) {
-                console.log('Error in getting Pending bills: ' + data);
-            });
+        var currentBillId = "";
+        var showAllBill = false;
 
-        $scope.showBills = function() {
+        if (!showAllBill) {
+            Bills.getPending()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting Pending bills: ' + data);
+                });
+        } else {
+            Bills.getAll()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting all bills: ' + data);
+                });
+        }
+
+        $scope.recordBillId = function(id) {
+            currentBillId = id;
+        };
+
+        $scope.deleteFromModal = function() {
+            Bills.delete(currentBillId)
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in deleting bill: ' + data);
+                });
+        };
+
+        $scope.recordAndShowBill = function() {
             if ($scope.formData.allBillCheck == true) {
+                showAllBill = true;
                 Bills.getAll()
                     .success(function(data) {
                         $scope.bills = data;
@@ -24,6 +54,7 @@ angular.module('BillCtrl', [])
                         console.log('Error in getting all bills: ' + data);
                     });
             } else {
+                showAllBill = false;
                 Bills.getPending()
                     .success(function(data) {
                         $scope.bills = data;
