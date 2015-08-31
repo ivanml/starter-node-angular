@@ -7,28 +7,22 @@ angular.module('BillCtrl', [])
         var currentBillId = "";
         var showAllBill = false;
 
-        if (!showAllBill) {
-            Bills.getPending()
-                .success(function(data) {
-                    $scope.bills = data;
-                    console.log(data);
-                })
-                .error(function(data) {
-                    console.log('Error in getting Pending bills: ' + data);
-                });
-        } else {
-            Bills.getAll()
-                .success(function(data) {
-                    $scope.bills = data;
-                    console.log(data);
-                })
-                .error(function(data) {
-                    console.log('Error in getting all bills: ' + data);
-                });
-        }
+        Bills.getPending()
+            .success(function(data) {
+                $scope.bills = data;
+                console.log(data);
+            })
+            .error(function(data) {
+                console.log('Error in getting Pending bills: ' + data);
+            });
 
         $scope.recordBillId = function(id) {
             currentBillId = id;
+        };
+
+        $scope.trimDate = function(date) {
+            var arr = date.split('T');
+            return arr[0];
         };
 
         $scope.deleteFromModal = function() {
@@ -40,6 +34,10 @@ angular.module('BillCtrl', [])
                 .error(function(data) {
                     console.log('Error in deleting bill: ' + data);
                 });
+        };
+
+        $scope.isAllBill = function () {
+            return showAllBill;
         };
 
         $scope.recordAndShowBill = function() {
@@ -74,17 +72,6 @@ angular.module('BillCtrl', [])
                 })
                 .error(function(data) {
                     console.log('Error in getting Pending bills: ' + data);
-                });
-        };
-
-        $scope.showAllBills = function() {
-            Bills.getAll()
-                .success(function(data) {
-                    $scope.bills = data;
-                    console.log(data);
-                })
-                .error(function(data) {
-                    console.log('Error in getting all bills: ' + data);
                 });
         };
 

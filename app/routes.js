@@ -1,5 +1,10 @@
 var Nerd = require('./models/nerd');
+var Bill = require('./models/bill');
 
+// authentication
+
+
+// get nerds list
 function getNerds(res){
 	Nerd.find(function(err, nerds) {
 
@@ -11,10 +16,17 @@ function getNerds(res){
 		});
 };
 
-var Bill = require('./models/bill');
+// get respective Bills
+function getViewBills(isAllBill, res) {
+    if (isAllBill == true) {
+        getAllBills(res);
+    } else {
+        getPendingBills(res);
+    }
+}
 
 // get all bills
-function getAllBills(res){
+function getAllBills(res) {
 	Bill.find(function(err, bills) {
 			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
 			if (err)
@@ -40,16 +52,13 @@ function addBill(req, res) {
 	Bill.create({
 		owner : req.body.owner == "" ? "Me" : req.body.owner,
 		amount : req.body.amount,
-		description : req.body.description
+		description : req.body.description,
+        pending : !req.body.pending
 	}, function(err, bill) {
 		if (err)
 			res.send(err);
 
-        if (req.body.allBillCheck == true) {
-            getAllBills(res);
-        } else {
-		    getPendingBills(res);
-        }
+        getViewBills(req.body.allBillCheck, res);
 	});
 };
 
@@ -91,9 +100,21 @@ function openBill(req, res) {
 
 module.exports = function(app) {
 	// server routes ===========================================================
-	// handle things like api calls
 	// authentication routes
+/*    // route to test if the user is logged in or not
+    app.get('/logged_in', function(req, res) {
+        res.send(req.isAuthenticated() ? req.user : '0');
+    });
 
+    // route to log in
+    app.post('/login', passport.authenticate('local'), function(req, res) {
+        res.send(req.user);
+    });
+
+    // route to log out
+    app.post('/logout', function(req, res){
+        req.logOut(); res.send(200);
+    });*/
 
 	// frontend routes =========================================================
 	// get all nerds
