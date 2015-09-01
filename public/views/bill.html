@@ -27,7 +27,7 @@
     <!-- show all bills check box -->
     <div class="checkbox">
         <label>
-            <input type="checkbox" name="allBillCheck" ng-model="formData.allBillCheck" ng-click="recordAndShowBill()"> Show All Bills
+            <input type="checkbox" name="allBillCheckBox" ng-model="isAllBillChecked" ng-click="allBillToggle(isAllBillChecked)"> Show All Bills
         </label>
     </div>
 
@@ -54,10 +54,9 @@
             <td style="vertical-align: middle">{{ bill.description }}</td>
             <td style="vertical-align: middle">{{ trimDate(bill.add_date) }}</td>
             <td style="vertical-align: middle">
-                <!--Used for pending bills -->
-                <div class="btn-group" ng-class="{hidden: (bill.pending == false)}">
-                    <button type="button" class="btn btn-default btn-sm" ng-click="finishBill(bill._id)">
-                        Archive
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm" ng-click="toggleArchive(bill._id, bill.pending)">
+                        {{ bill.pending ? 'Archive' : 'Unarchive'}}
                     </button>
                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
@@ -68,19 +67,6 @@
                             <!-- Trigger the modal -->
                             <a href="#" ng-click="recordBillId(bill._id)" class="small" data-toggle="modal" data-target="#deleteConfirmModal">Delete</a>
                         </li>
-                    </ul>
-                </div>
-                <!--Used for archived bills -->
-                <div class="btn-group" ng-class="{hidden: (bill.pending == true)}">
-                    <button type="button" class="btn btn-default btn-sm" ng-click="recordBillId(bill._id)" data-toggle="modal" data-target="#deleteConfirmModal">
-                        Delete
-                    </button>
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" ng-click="unfinishBill(bill._id)" class="small">Unarchive</a></li>
                     </ul>
                 </div>
             </td>

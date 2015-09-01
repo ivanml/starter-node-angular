@@ -49,52 +49,45 @@ function getPendingBills(res){
 
 function addBill(req, res) {
 	// create a bill, information comes from AJAX request from Angular
+    var formData = req.body.submitForm;
+    var isAllBill = req.body.isAllBillChecked;
 	Bill.create({
-		owner : req.body.owner == "" ? "Me" : req.body.owner,
-		amount : req.body.amount,
-		description : req.body.description,
-        pending : !req.body.pending
-	}, function(err, bill) {
-		if (err)
-			res.send(err);
+		owner : formData.owner == "" ? "Me" : formData.owner,
+		amount : formData.amount,
+		description : formData.description,
+        pending : !formData.pending
+	    }, function(err, bill) {
+            if (err)
+                res.send(err);
 
-        getViewBills(req.body.allBillCheck, res);
-	});
+            getViewBills(isAllBill, res);
+	    });
 };
 
 // delete a bill after checking it
 function removeBill(req, res) {
+    var isAllBill = req.body.isAllBillChecked;
 	Bill.remove(
         { _id : req.params.bill_id },
         function(err, bill) {
 		    if (err)
 			    res.send(err);
 
-            getPendingBills(res);
+            getViewBills(isAllBill, res);
         });
 }
 
-function closeBill(req, res) {
+function toggleBillStatus(req, res) {
+    var billStatus = req.body.billStatus;
+    var isAllBill = req.body.isAllBillChecked;
     Bill.update(
         { _id : req.params.bill_id },
-        { $set : { pending: false } },
+        { $set : { pending: !billStatus } },
         function(err, bills) {
             if (err)
                 res.send(err);
 
-            getPendingBills(res);
-    });
-}
-
-function openBill(req, res) {
-    Bill.update(
-        { _id : req.params.bill_id },
-        { $set : { pending: true } },
-        function(err, bills) {
-            if (err)
-                res.send(err);
-
-            getPendingBills(res);
+            getViewBills(isAllBill, res);
         });
 }
 
@@ -145,19 +138,13 @@ module.exports = function(app) {
 		addBill(req, res);
 	});
 
-	// delete a bill
-	app.delete('/api/bills/:bill_id', function(req, res) {
+	// delete a bill permanently from db
+	app.put('/api/bills/delete/:bill_id', function(req, res) {
 		removeBill(req, res);
 	});
 
-    // finish a bill
-    app.delete('/api/bills/finish_bill/:bill_id', function(req, res) {
-        closeBill(req, res);
-    });
-
-    // unfinish a bill
-    app.delete('/api/bills/unfinish_bill/:bill_id', function(req, res) {
-        console.log(req.params.bill_id);
-        openBill(req, res);
-    });
+    // archive/unarchive a bill
+    app.put('/api/bills/toggle/:bill_id', function(req, res) {
+        toggleBillStatus(req, res);
+    })
 };

@@ -15,19 +15,14 @@ angular.module('BillService', [])
 				return $http.post('/api/bills', billData);
 			},
 
-			// call to DELETE a bill
-			delete : function(id) {
-				return $http.delete('/api/bills/' + id);
+			// call to PUT but actually deletes a bill
+			delete : function(bill_id, billData) {
+				return $http.put('/api/bills/delete/' + bill_id, billData);
 			},
 
-            // update db
-            finish : function(id) {
-                return $http.delete('/api/bills/finish_bill/' + id);
-            },
-
-            // update db
-            unfinish : function(id) {
-                return $http.delete('/api/bills/unfinish_bill/' + id);
+			// call to PUT and update a bill's status
+            toggleFinish : function(bill_id, billData) {
+                return $http.put('/api/bills/toggle/' + bill_id, billData);
             }
 
 		}
