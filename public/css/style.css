@@ -3,6 +3,16 @@ body { padding-top:30px; }
 .success-color { color: #62c462 }
 .warning-color { color: #f0ad4e }
 
+.table-hover-blue tbody tr:hover td, .table-hover-blue tbody tr:hover th {
+    background-color: #F5FAFE;
+}
+
+.fixed-row-h {
+    width: 100%;
+    display: inline-table;
+    height:60px;                // <-- the rows height
+}
+
 /****** LOGIN MODAL ******/
 .loginmodal-container {
     padding: 30px;

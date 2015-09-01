@@ -3,6 +3,7 @@ angular.module('BillCtrl', [])
 
         $scope.formData = {};
         $scope.loading = true;
+        $scope.isAnyRowHovered = false;
 
         var currentBillId = "";
         var showAllBill = false;
@@ -50,10 +51,6 @@ angular.module('BillCtrl', [])
                     });
             }
         }
-
-        $scope.isAllBill = function () {
-            return showAllBill;
-        };
 
         $scope.recordBillId = function(id) {
             currentBillId = id;
@@ -117,6 +114,12 @@ angular.module('BillCtrl', [])
                 .error(function(data) {
                     console.log('Error in archiving/unarchiving bill: ' + data);
                 });
+        };
+
+        // hover control
+        $scope.hoverRow = function(bill) {
+            $scope.isAnyRowHovered = !$scope.isAnyRowHovered;
+            return bill.isHovered = ! bill.isHovered;
         };
 
     }]);
