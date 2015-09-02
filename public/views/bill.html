@@ -2,7 +2,6 @@
     <h1>{{ isAllBillChecked ? 'All Bills' : 'Pending Bills' }}</h1>
 </div>
 
-
 <!-- Modal -->
 <div class="modal fade" id="deleteConfirmModal" role="dialog">
     <div class="modal-dialog">
@@ -20,7 +19,6 @@
                 <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="deleteFromModal(id)">Confirm</button>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -29,6 +27,14 @@
     <label>
         <input type="checkbox" name="allBillCheckBox" ng-model="isAllBillChecked" ng-click="allBillToggle(isAllBillChecked)"> Show All Bills
     </label>
+    <!-- search bill box -->
+    <div class="pull-right">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <input type="text" class="form-control col-lg-2" placeholder="Search Bills" ng-model="searchBillText">
+            </div>
+        </form>
+    </div>
 </div>
 
 <div>
@@ -41,10 +47,10 @@
         <th>Amount</th>
         <th>Description</th>
         <th>Add Date</th>
-        <th class="col-lg-2" style="text-align: center">Action</th>
+        <th class="col-lg-2 text-center">Action</th>
     </tr>
     </thead>
-    <tr ng-repeat="bill in bills | orderBy: '-add_date'" ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
+    <tr ng-repeat="bill in bills | filter:searchBillText | orderBy: '-add_date'" ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
         <td style="vertical-align: middle">{{ $index + 1 }}</td>
         <td style="vertical-align: middle" ng-show="isAllBillChecked">
             <span ng-class="{'glyphicon glyphicon-ok success-color': (bill.pending == false)}" aria-hidden="true"></span>
@@ -53,7 +59,7 @@
         <td style="vertical-align: middle">{{ bill.amount }}</td>
         <td style="vertical-align: middle">{{ bill.description }}</td>
         <td style="vertical-align: middle">{{ trimDate(bill.add_date) }}</td>
-        <td style="vertical-align: middle; text-align: center">
+        <td style="vertical-align: middle" class="text-center">
             <div class="btn-group" ng-show="bill.isHovered">
                 <button type="button" class="btn btn-default btn-sm" ng-click="toggleArchive(bill._id, bill.pending)">
                     {{ bill.pending ? 'Archive' : 'Unarchive'}}
@@ -82,7 +88,7 @@
             <input type="text" class="form-control" placeholder="who owns this" ng-model="formData.owner">
         </td>
         <td>
-            <input type="text" class="form-control" placeholder="amount due" ng-model="formData.amount">
+            <input type="number" class="form-control" placeholder="amount due" ng-model="formData.amount">
         </td>
         <td>
             <input type="text" class="form-control" placeholder="what is it about" ng-model="formData.description">
@@ -90,7 +96,7 @@
         <td class="text-muted" style="vertical-align: middle; text-align: center">
             --
         </td>
-        <td style="text-align: center">
+        <td class="text-center">
             <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-sm" ng-click="createBills()">
                     Add Bill
