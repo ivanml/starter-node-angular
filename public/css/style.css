@@ -1,16 +1,15 @@
 body { padding-top:30px; }
 .vertical-center { vertical-align: middle}
+
 .success-color { color: #62c462 }
+.danger-color { color: #ee5f5b }
 .warning-color { color: #f0ad4e }
+
+.positive-color { color: #51a351 }
+.negative-color { color: #bd362f }
 
 .table-hover-blue tbody tr:hover td, .table-hover-blue tbody tr:hover th {
     background-color: #F5FAFE;
-}
-
-.fixed-row-h {
-    width: 100%;
-    display: inline-table;
-    height:60px;                // <-- the rows height
 }
 
 /****** LOGIN MODAL ******/
