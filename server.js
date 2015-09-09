@@ -36,10 +36,6 @@ app.use(expressSession({
 app.use(passport.initialize()); // Add passport initialization
 app.use(passport.session());    // Add passport initialization
 
-// Initialize Passport
-var initPassport = require('./config/passport_strategy/initialize');
-initPassport(passport);
-
 // --------------------------------
 
 // routes ==================================================
