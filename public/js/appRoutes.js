@@ -8,14 +8,19 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
 			controller: 'MainController'
 		})
 
+		.when('/login', {
+			templateUrl: 'views/login.html',
+			controller: 'AuthController'
+		})
+
+        .when('/signup', {
+            templateUrl: 'views/signup.html',
+            controller: 'AuthController'
+        })
+
 		.when('/bills', {
 			templateUrl: 'views/bill.html',
 			controller: 'BillController'
-		})
-
-		.when('/login', {
-			templateUrl: 'views/login.html'
-		//	controller: 'BillController'
 		})
 
 		.when('/geeks', {

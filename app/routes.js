@@ -1,8 +1,9 @@
+/* Required Models */
 var Nerd = require('./models/nerd');
 var Bill = require('./models/bill');
+var User = require('./models/user');
 
-// authentication
-
+var bCrypt = require('bcrypt-nodejs');
 
 // get nerds list
 function getNerds(res){
@@ -16,6 +17,7 @@ function getNerds(res){
 		});
 };
 
+/* Bill functions */
 // get respective Bills
 function getViewBills(isAllBill, res) {
     if (isAllBill == true) {
@@ -47,6 +49,7 @@ function getPendingBills(res){
     });
 };
 
+// add a bill record
 function addBill(req, res) {
 	// create a bill, information comes from AJAX request from Angular
     var formData = req.body.submitForm;
@@ -77,6 +80,7 @@ function removeBill(req, res) {
         });
 }
 
+// archive/unarchive a bill
 function toggleBillStatus(req, res) {
     var billStatus = req.body.billStatus;
     var isAllBill = req.body.isAllBillChecked;
@@ -91,23 +95,53 @@ function toggleBillStatus(req, res) {
         });
 }
 
-module.exports = function(app) {
+/* Route APIs */
+module.exports = function(app, passport) {
 	// server routes ===========================================================
-	// authentication routes
-/*    // route to test if the user is logged in or not
-    app.get('/logged_in', function(req, res) {
-        res.send(req.isAuthenticated() ? req.user : '0');
+
+    // LOGOUT ==============================
+    app.get('/api/logout', function(req, res) {
+        req.logout();
+        res.redirect('/');
     });
 
-    // route to log in
-    app.post('/login', passport.authenticate('local'), function(req, res) {
-        res.send(req.user);
+    // LOGIN ==============================
+    app.post('/api/login', function(req, res, next) {
+        passport.authenticate('local-login', function(err, user, info) {
+            if (err) {
+                return res.status(500).json({err: err});
+                //return next(err); // will generate a 500 error
+            }
+            // Generate a JSON response reflecting authentication status
+            if (! user) {
+                console.log('login error, info: ' + JSON.stringify(info));
+                return res.status(401).json({err: info});
+                //return res.send({ success : false, message : 'authentication failed' });
+            }
+            res.status(200).json({status: 'Login successful!'});
+            //return res.send({ success : true, message : 'authentication succeeded' });
+        })(req, res, next);
     });
 
-    // route to log out
-    app.post('/logout', function(req, res){
-        req.logOut(); res.send(200);
-    });*/
+    // SIGNUP ==============================
+    app.post('/api/signup', function(req, res, next) {
+        console.log('server side signup api called. ');
+        passport.authenticate('local-signup', function(err, user, info) {
+            if (err) {
+                return res.status(500).json({err: err});
+                //return next(err); // will generate a 500 error
+            }
+            // Generate a JSON response reflecting authentication status
+            if (! user) {
+                console.log('signup error, info: ' + JSON.stringify(info));
+                return res.status(401).json({err: info});
+                //return res.send({ success : false, message : 'authentication failed' });
+            }
+            res.status(200).json({status: 'Signup successful!'});
+            //return res.send({ success : true, message : 'authentication succeeded' });
+        })(req, res, next);
+    });
+
 
 	// frontend routes =========================================================
 	// get all nerds

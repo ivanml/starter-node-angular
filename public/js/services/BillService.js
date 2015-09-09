@@ -24,6 +24,5 @@ angular.module('BillService', [])
             toggleFinish : function(bill_id, billData) {
                 return $http.put('/api/bills/toggle/' + bill_id, billData);
             }
-
 		}
-}]);
+	}]);

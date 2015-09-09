@@ -55,10 +55,10 @@
         | orderBy: '-add_date'"
         ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
         <td style="vertical-align: middle">{{ $index + 1 }}</td>
-        <td  ng-show="isAllBillChecked" style="vertical-align: middle">
+        <td ng-show="isAllBillChecked" style="vertical-align: middle">
             <span ng-class="{'glyphicon glyphicon-ok success-color': (bill.pending == false)}" aria-hidden="true"></span>
         </td>
-        <td style="vertical-align: middle">{{ bill.owner }}</td>
+        <td style="vertical-align: middle"><a href="#">{{ bill.owner }}</a></td>
         <td style="vertical-align: middle">
             <span ng-class="{'positive-color': (bill.amount > 0), 'negative-color': (bill.amount < 0)}">{{ bill.amount }}</span>
         </td>
