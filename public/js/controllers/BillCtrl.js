@@ -1,55 +1,59 @@
 angular.module('BillCtrl', [])
-    .controller('BillController', ['$scope', '$http', 'Bills', function($scope, $http, Bills) {
+    .controller('BillController', ['$scope', '$http', '$cookieStore', '$rootScope', 'Bills', function($scope, $http, $cookieStore, $rootScope, Bills) {
 
         $scope.formData = {};
         $scope.loading = true;
         $scope.isAnyRowHovered = false;
 
         var currentBillId = "";
-        var showAllBill = false;
+
+        function getAllBillWrapper() {
+            Bills.getAll()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting all bills: ' + data);
+                });
+        }
+
+        function getPendingBillWrapper() {
+            Bills.getPending()
+                .success(function(data) {
+                    $scope.bills = data;
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log('Error in getting Pending bills: ' + data);
+                });
+        }
+
+        if ($rootScope.billOptions === {}) {
+            getPendingBillWrapper();
+        } else {
+            if ($rootScope.billOptions.isAllBill) {
+                getAllBillWrapper();
+            } else {
+                getPendingBillWrapper();
+            }
+        }
+
+        $scope.toggleAllBill = function(allBill) {
+            $rootScope.billOptions = { isAllBill : allBill };
+            $cookieStore.put('billOptions', $rootScope.billOptions);
+
+            if (allBill) {
+                getAllBillWrapper();
+            } else {
+                getPendingBillWrapper();
+            }
+        }
 
         // used for maintaining checkbox states
         $scope.CONFIG = localStorage.getItem('CONFIG');
         if (!$scope.CONFIG) {
             $scope.CONFIG = {isAllBill : false};
-        }
-
-        // initialize as getting pending bills
-        Bills.getPending()
-            .success(function(data) {
-                $scope.bills = data;
-                console.log(data);
-            })
-            .error(function(data) {
-                console.log('Error in getting Pending bills: ' + data);
-            });
-
-        // function call after checkbox click
-        $scope.allBillToggle = function(checked) {
-            $scope.CONFIG.isAllBill = checked;
-            localStorage.setItem('CONFIG', $scope.CONFIG);
-
-            if (checked) {
-                showAllBill = true;
-                Bills.getAll()
-                    .success(function(data) {
-                        $scope.bills = data;
-                        console.log(data);
-                    })
-                    .error(function(data) {
-                        console.log('Error in getting all bills: ' + data);
-                    });
-            } else {
-                showAllBill = false;
-                Bills.getPending()
-                    .success(function(data) {
-                        $scope.bills = data;
-                        console.log(data);
-                    })
-                    .error(function(data) {
-                        console.log('Error in getting Pending bills: ' + data);
-                    });
-            }
         }
 
         $scope.recordBillId = function(id) {
@@ -73,7 +77,7 @@ angular.module('BillCtrl', [])
                 // call the create function from our service (returns a promise object)
                 var postData = {
                     submitForm: $scope.formData,
-                    isAllBillChecked: showAllBill
+                    isAllBillChecked: $rootScope.billOptions.isAllBill
                 };
                 Bills.create(postData)
                     // if successful creation, call our get function to get all the new todos
@@ -90,7 +94,7 @@ angular.module('BillCtrl', [])
 
         // delete a bill, permanently from database
         $scope.deleteFromModal = function() {
-            Bills.delete(currentBillId, {isAllBillChecked: showAllBill})
+            Bills.delete(currentBillId, {isAllBillChecked: $rootScope.billOptions.isAllBill})
                 .success(function(data) {
                     $scope.bills = data;
                     console.log(data);
@@ -104,7 +108,7 @@ angular.module('BillCtrl', [])
         $scope.toggleArchive = function(billId, isPending) {
             var putData = {
                 billStatus: isPending,
-                isAllBillChecked: showAllBill
+                isAllBillChecked: $rootScope.billOptions.isAllBill
             };
             Bills.toggleFinish(billId, putData)
                 .success(function(data) {

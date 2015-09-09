@@ -10,15 +10,17 @@ module.exports = function(passport) {
     // passport session setup ==================================================
     // =========================================================================
     // required for persistent login sessions
-    // passport needs ability to serialize and unserialize users out of session
+    // passport needs ability to serialize and deserialize users out of session
 
     // used to serialize the user for the session
     passport.serializeUser(function(user, done) {
-        done(null, user.id);
+        console.log('serialize user called');
+        done(null, user._id);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
+        console.log('deserialize user called');
         User.findById(id, function(err, user) {
             done(err, user);
         });
@@ -74,7 +76,6 @@ module.exports = function(passport) {
 
             // asynchronous
             process.nextTick(function() {
-                console.log('incoming email: ', email);
                 User.findOne({ 'local.email' :  email }, function(err, user) {
                     // if there are any errors, return the error
                     if (err)

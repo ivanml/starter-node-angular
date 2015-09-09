@@ -1,5 +1,5 @@
 <div class="page-header">
-    <h1>{{ isAllBillChecked ? 'All Bills' : 'Pending Bills' }}</h1>
+    <h2>{{ billOptions.isAllBill ? 'All Bills' : 'Pending Bills' }}</h2>
 </div>
 
 <!-- Modal -->
@@ -25,8 +25,9 @@
 <!-- show all bills check box -->
 <div class="checkbox">
     <label>
-        <input type="checkbox" name="allBillCheckBox" ng-model="isAllBillChecked" ng-click="allBillToggle(isAllBillChecked)"> Show All Bills
+        <input type="checkbox" name="allBillCheck" ng-model="allBill" ng-click="toggleAllBill(allBill)" ng-checked="billOptions.isAllBill"> Show All Bills
     </label>
+
     <!-- search bill box -->
     <div class="pull-right">
         <form class="form-horizontal">
@@ -42,7 +43,7 @@
     <thead>
     <tr>
         <th width="30">ID</th>
-        <th width="60" ng-show="isAllBillChecked">Status</th>
+        <th width="60" ng-show="billOptions.isAllBill">Status</th>
         <th width="100">Owner</th>
         <th width="100">Amount</th>
         <th>Description</th>
@@ -55,7 +56,7 @@
         | orderBy: '-add_date'"
         ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
         <td style="vertical-align: middle">{{ $index + 1 }}</td>
-        <td ng-show="isAllBillChecked" style="vertical-align: middle">
+        <td ng-show="billOptions.isAllBill" style="vertical-align: middle">
             <span ng-class="{'glyphicon glyphicon-ok success-color': (bill.pending == false)}" aria-hidden="true"></span>
         </td>
         <td style="vertical-align: middle"><a href="#">{{ bill.owner }}</a></td>
@@ -86,7 +87,7 @@
         <td class="text-muted" style="vertical-align: middle">
             {{ bills.length + 1 }}
         </td>
-        <td  ng-show="isAllBillChecked" style="vertical-align: middle">
+        <td  ng-show="billOptions.isAllBill" style="vertical-align: middle">
             <input type="checkbox" name="isFinishCheckBox" ng-model="formData.pending"> Done
         </td>
         <td>

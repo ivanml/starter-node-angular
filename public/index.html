@@ -81,7 +81,12 @@
 			</div>
 		</nav>
 
-        <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+        <div class="fade in"
+             ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }"
+             ng-if="flash">
+            <a ng-show="globals.currentUser.isLoggedIn" class="close" data-dismiss="alert" href="#">&times;</a>
+            <p ng-if="flash" ng-bind="flash.message"></p>
+        </div>
 
         <!-- ANGULAR DYNAMIC CONTENT -->
 		<div ng-view></div>

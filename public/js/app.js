@@ -15,6 +15,7 @@ var app = angular.module('billApp', ['ngRoute', 'ngCookies', 'appRoutes', 'MainC
 app.run(['$rootScope', '$location', '$cookieStore', '$http', function($rootScope, $location, $cookieStore, $http) {
     // keep user logged in after page refresh
     $rootScope.globals = $cookieStore.get('globals') || {};
+    $rootScope.billOptions = $cookieStore.get('billOptions') || {};
     if ($rootScope.globals.currentUser) {
         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
     }

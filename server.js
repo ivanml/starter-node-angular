@@ -7,6 +7,8 @@ var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var flash          = require('connect-flash');
 var passport       = require('passport');
+var cookieParser   = require('cookie-parser');
+var session        = require('express-session');
 
 // configuration ===========================================
 	
@@ -27,12 +29,12 @@ app.use(express.static(__dirname + '/public')); // set the static files location
 app.use(flash());
 
 // --------------------------------
-var expressSession = require('express-session');
-app.use(expressSession({
+app.use(session({
     secret: 'securedsession',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
 }));
+app.use(cookieParser('securedsession'));
 app.use(passport.initialize()); // Add passport initialization
 app.use(passport.session());    // Add passport initialization
 

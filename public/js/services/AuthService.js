@@ -20,14 +20,17 @@ angular.module('AuthService', [])
 
             clearCredentials : function() {
                 $rootScope.globals = { isLoggedIn: false };
+                $rootScope.billOptions = { isAllBill: false };
                 $cookieStore.remove('globals');
+                $cookieStore.remove('billOptions');
                 $http.defaults.headers.common.Authorization = 'Basic ';
             },
 
             login : function(email, passWord, callback) {
                 $http.post('/api/login', { email: email, password: passWord })
                     .success(function(data) {
-                        var response = { success: true };
+                        console.log('>>>>>>>>>>>>>>>>', data.user);
+                        var response = { success: true, message: data.status, user: data.user };
                         callback(response);
                     })
                     .error(function(data) {
@@ -38,10 +41,10 @@ angular.module('AuthService', [])
 
 
             signup : function(email, passWord, callback) {
-                console.log('Service signup called.');
                 $http.post('/api/signup', { email: email, password: passWord })
                     .success(function(data) {
-                        var response = { success: true };
+                        console.log('++++++++++++++++', data.user);
+                        var response = { success: true, message: data.status, user: data.user };
                         callback(response);
                     })
                     .error(function(data) {

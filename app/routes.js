@@ -106,39 +106,41 @@ module.exports = function(app, passport) {
     });
 
     // LOGIN ==============================
-    app.post('/api/login', function(req, res, next) {
-        passport.authenticate('local-login', function(err, user, info) {
+    app.post('/api/login', function (req, res, next) {
+        passport.authenticate('local-login', function (err, user, info) {
             if (err) {
                 return res.status(500).json({err: err});
-                //return next(err); // will generate a 500 error
             }
-            // Generate a JSON response reflecting authentication status
-            if (! user) {
-                console.log('login error, info: ' + JSON.stringify(info));
+            if (!user) {
                 return res.status(401).json({err: info});
-                //return res.send({ success : false, message : 'authentication failed' });
             }
-            res.status(200).json({status: 'Login successful!'});
-            //return res.send({ success : true, message : 'authentication succeeded' });
+            req.login(user, function(err) {
+                if (err) {
+                    return res.status(500).json({err: err});
+                } else {
+                    res.status(200).json({status: 'Login successful!', user: req.user});
+                }
+            })
         })(req, res, next);
     });
 
     // SIGNUP ==============================
     app.post('/api/signup', function(req, res, next) {
-        console.log('server side signup api called. ');
         passport.authenticate('local-signup', function(err, user, info) {
             if (err) {
                 return res.status(500).json({err: err});
-                //return next(err); // will generate a 500 error
             }
             // Generate a JSON response reflecting authentication status
             if (! user) {
-                console.log('signup error, info: ' + JSON.stringify(info));
                 return res.status(401).json({err: info});
-                //return res.send({ success : false, message : 'authentication failed' });
             }
-            res.status(200).json({status: 'Signup successful!'});
-            //return res.send({ success : true, message : 'authentication succeeded' });
+            req.login(user, function(err) {
+                if (err) {
+                    return res.status(500).json({err: err});
+                } else {
+                    res.status(200).json({status: 'Signup successful!', user: req.user});
+                }
+            })
         })(req, res, next);
     });
 
