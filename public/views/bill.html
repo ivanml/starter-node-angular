@@ -1,7 +1,3 @@
-<div class="page-header">
-    <h2>{{ billOptions.isAllBill ? 'All Bills' : 'Pending Bills' }}</h2>
-</div>
-
 <!-- Modal -->
 <div class="modal fade" id="deleteConfirmModal" role="dialog">
     <div class="modal-dialog">
@@ -22,93 +18,102 @@
     </div>
 </div>
 
-<!-- show all bills check box -->
-<div class="checkbox">
-    <label>
-        <input type="checkbox" name="allBillCheck" ng-model="allBill" ng-click="toggleAllBill(allBill)" ng-checked="billOptions.isAllBill"> Show All Bills
-    </label>
-
-    <!-- search bill box -->
-    <div class="pull-right">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <input type="text" class="form-control col-lg-2" placeholder="Search Bills" ng-model="searchBillText">
-            </div>
-        </form>
-    </div>
-</div>
-
 <div>
-<table class="table table-hover-blue">
-    <thead>
-    <tr>
-        <th width="30">ID</th>
-        <th width="60" ng-show="billOptions.isAllBill">Status</th>
-        <th width="100">Owner</th>
-        <th width="100">Amount</th>
-        <th>Description</th>
-        <th width="100" class="text-center">Add Date</th>
-        <th width="150" class="text-center">Action</th>
-    </tr>
-    </thead>
-    <tr ng-repeat="bill in bills
-        | filter: searchBillText
-        | orderBy: '-add_date'"
-        ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
-        <td style="vertical-align: middle">{{ $index + 1 }}</td>
-        <td ng-show="billOptions.isAllBill" style="vertical-align: middle">
-            <span ng-class="{'glyphicon glyphicon-ok success-color': (bill.pending == false)}" aria-hidden="true"></span>
-        </td>
-        <td style="vertical-align: middle"><a href="#">{{ bill.owner }}</a></td>
-        <td style="vertical-align: middle">
-            <span ng-class="{'positive-color': (bill.amount > 0), 'negative-color': (bill.amount < 0)}">{{ bill.amount }}</span>
-        </td>
-        <td style="vertical-align: middle" width="200">{{ bill.description }}</td>
-        <td style="vertical-align: middle" class="text-center">{{ trimDate(bill.add_date) }}</td>
-        <td style="vertical-align: middle" class="text-center">
-            <div class="btn-group" ng-show="bill.isHovered">
-                <button type="button" class="btn btn-default btn-sm" ng-click="toggleArchive(bill._id, bill.pending)">
-                    {{ bill.pending ? 'Archive' : 'Unarchive'}}
-                </button>
-                <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <!-- Trigger the modal -->
-                        <a href="#" ng-click="recordBillId(bill._id)" class="small" data-toggle="modal" data-target="#deleteConfirmModal">Delete</a>
-                    </li>
-                </ul>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td class="text-muted" style="vertical-align: middle">
-            {{ bills.length + 1 }}
-        </td>
-        <td  ng-show="billOptions.isAllBill" style="vertical-align: middle">
-            <input type="checkbox" name="isFinishCheckBox" ng-model="formData.pending"> Done
-        </td>
-        <td>
-            <input type="text" class="form-control" placeholder="who owns this" ng-model="formData.owner">
-        </td>
-        <td>
-            <input type="number" class="form-control" placeholder="amount due" ng-model="formData.amount">
-        </td>
-        <td>
-            <input type="text" class="form-control" placeholder="what is it about" ng-model="formData.description">
-        </td>
-        <td class="text-muted text-center" style="vertical-align: middle">
-            --
-        </td>
-        <td class="text-center">
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-sm" ng-click="createBills()">
-                    Add New Bill
-                </button>
-            </div>
-        </td>
-    </tr>
-</table>
+    <div class="page-header">
+        <h2>{{ billOptions.isAllBill ? 'All Bills' : 'Pending Bills' }}</h2>
+    </div>
+
+    <!-- show all bills check box -->
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="allBillCheck" ng-model="allBill" ng-click="toggleAllBill(allBill)" ng-checked="billOptions.isAllBill"> Show All Bills
+        </label>
+
+        <!-- search bill box -->
+        <div class="pull-right">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search Bills" ng-model="searchBillText">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+
+
+        <table class="table table-hover-blue">
+            <thead>
+            <tr>
+                <th width="30">ID</th>
+                <th width="60" ng-show="billOptions.isAllBill">Status</th>
+                <th width="100">Owner</th>
+                <th width="100">Amount</th>
+                <th>Description</th>
+                <th width="100" class="text-center">Add Date</th>
+                <th width="150" class="text-center">Action</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="bill in bills
+                | filter: searchBillText
+                | orderBy: '-add_date'"
+                ng-mouseenter="hoverRow(bill)" ng-mouseleave="hoverRow(bill)" style="height: 48px">
+                <td style="vertical-align: middle">{{ $index + 1 }}</td>
+                <td ng-show="billOptions.isAllBill" style="vertical-align: middle">
+                    <span ng-class="{'glyphicon glyphicon-ok success-color': (bill.pending == false)}" aria-hidden="true"></span>
+                </td>
+                <td style="vertical-align: middle"><a href="#">{{ bill.owner }}</a></td>
+                <td style="vertical-align: middle">
+                    <span ng-class="{'positive-color': (bill.amount > 0), 'negative-color': (bill.amount < 0)}">{{ bill.amount }}</span>
+                </td>
+                <td style="vertical-align: middle" width="200">{{ bill.description }}</td>
+                <td style="vertical-align: middle" class="text-center">{{ trimDate(bill.add_date) }}</td>
+                <td style="vertical-align: middle" class="text-center">
+                    <div class="btn-group" ng-show="bill.isHovered">
+                        <button type="button" class="btn btn-default btn-sm" ng-click="toggleArchive(bill._id, bill.pending)">
+                            {{ bill.pending ? 'Archive' : 'Unarchive'}}
+                        </button>
+                        <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <!-- Trigger the modal -->
+                                <a href="#" ng-click="recordBillId(bill._id)" class="small" data-toggle="modal" data-target="#deleteConfirmModal">Delete</a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-muted" style="vertical-align: middle">
+                    {{ bills.length + 1 }}
+                </td>
+                <td  ng-show="billOptions.isAllBill" style="vertical-align: middle">
+                    <input type="checkbox" name="isFinishCheckBox" ng-model="formData.pending"> Done
+                </td>
+                <td>
+                    <input type="text" class="form-control" placeholder="who owns this" ng-model="formData.owner">
+                </td>
+                <td>
+                    <input type="number" class="form-control" placeholder="amount due" ng-model="formData.amount">
+                </td>
+                <td>
+                    <input type="text" class="form-control" placeholder="what is it about" ng-model="formData.description">
+                </td>
+                <td class="text-muted text-center" style="vertical-align: middle">
+                    --
+                </td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="createBills()">
+                            Add New Bill
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
 </div>

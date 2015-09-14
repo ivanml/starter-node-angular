@@ -2,7 +2,10 @@
 	<h1>Welcome to Ivan's App!</h1>
 </div>
 <div class="text-center">
-    <a href="/bills" class="btn btn-info btn-lg">
+    <a href="/bills" class="btn btn-info btn-lg" ng-show="globals.isLoggedIn">
         Pending Bills <span class="badge">{{ pending_bill_num }}</span>
+    </a>
+    <a href="/login" class="btn btn-primary btn-lg" ng-show="! globals.isLoggedIn">
+        Login to View Bills
     </a>
 </div>

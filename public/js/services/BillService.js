@@ -2,12 +2,12 @@ angular.module('BillService', [])
     .factory('Bills', ['$http', function($http) {
         return {
 			// get data from db
-			getAll : function() {
-				return $http.get('/api/all_bills');
+			getAll : function(billData) {
+				return $http.post('/api/all_bills', billData);
 			},
 
-			getPending : function() {
-                return $http.get('/api/pending_bills');
+			getPending : function(billData) {
+                return $http.post('/api/pending_bills', billData);
             },
 
 			// call to POST and create a new bill record

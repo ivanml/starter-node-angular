@@ -8,10 +8,9 @@ angular.module('BillCtrl', [])
         var currentBillId = "";
 
         function getAllBillWrapper() {
-            Bills.getAll()
+            Bills.getAll({ userId : $rootScope.globals.currentUser.userId })
                 .success(function(data) {
                     $scope.bills = data;
-                    console.log(data);
                 })
                 .error(function(data) {
                     console.log('Error in getting all bills: ' + data);
@@ -19,10 +18,9 @@ angular.module('BillCtrl', [])
         }
 
         function getPendingBillWrapper() {
-            Bills.getPending()
+            Bills.getPending({ userId : $rootScope.globals.currentUser.userId })
                 .success(function(data) {
                     $scope.bills = data;
-                    console.log(data);
                 })
                 .error(function(data) {
                     console.log('Error in getting Pending bills: ' + data);
@@ -40,7 +38,9 @@ angular.module('BillCtrl', [])
         }
 
         $scope.toggleAllBill = function(allBill) {
-            $rootScope.billOptions = { isAllBill : allBill };
+            $rootScope.billOptions = {
+                isAllBill : allBill
+            };
             $cookieStore.put('billOptions', $rootScope.billOptions);
 
             if (allBill) {
@@ -76,6 +76,7 @@ angular.module('BillCtrl', [])
 
                 // call the create function from our service (returns a promise object)
                 var postData = {
+                    userId : $rootScope.globals.currentUser.userId,
                     submitForm: $scope.formData,
                     isAllBillChecked: $rootScope.billOptions.isAllBill
                 };
@@ -94,10 +95,13 @@ angular.module('BillCtrl', [])
 
         // delete a bill, permanently from database
         $scope.deleteFromModal = function() {
-            Bills.delete(currentBillId, {isAllBillChecked: $rootScope.billOptions.isAllBill})
+            Bills.delete(currentBillId,
+                        {
+                            userId : $rootScope.globals.currentUser.userId,
+                            isAllBillChecked: $rootScope.billOptions.isAllBill
+                        })
                 .success(function(data) {
                     $scope.bills = data;
-                    console.log(data);
                 })
                 .error(function(data) {
                     console.log('Error in deleting bill: ' + data);
@@ -107,13 +111,13 @@ angular.module('BillCtrl', [])
         // archive or unarchive a bill
         $scope.toggleArchive = function(billId, isPending) {
             var putData = {
+                userId : $rootScope.globals.currentUser.userId,
                 billStatus: isPending,
                 isAllBillChecked: $rootScope.billOptions.isAllBill
             };
             Bills.toggleFinish(billId, putData)
                 .success(function(data) {
                     $scope.bills = data;
-                    console.log(data);
                 })
                 .error(function(data) {
                     console.log('Error in archiving/unarchiving bill: ' + data);

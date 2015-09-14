@@ -3,8 +3,6 @@ var Nerd = require('./models/nerd');
 var Bill = require('./models/bill');
 var User = require('./models/user');
 
-var bCrypt = require('bcrypt-nodejs');
-
 // get nerds list
 function getNerds(res){
 	Nerd.find(function(err, nerds) {
@@ -19,17 +17,17 @@ function getNerds(res){
 
 /* Bill functions */
 // get respective Bills
-function getViewBills(isAllBill, res) {
+function getViewBills(isAllBill, req, res) {
     if (isAllBill == true) {
-        getAllBills(res);
+        getAllBills(req, res);
     } else {
-        getPendingBills(res);
+        getPendingBills(req, res);
     }
 }
 
 // get all bills
-function getAllBills(res) {
-	Bill.find(function(err, bills) {
+function getAllBills(req, res) {
+	Bill.find({ userId: req.body.userId }, function(err, bills) {
 			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
 			if (err)
 				res.send(err)
@@ -39,8 +37,8 @@ function getAllBills(res) {
 };
 
 // get only active bills
-function getPendingBills(res){
-    Bill.find({ pending: true }, function(err, bills) {
+function getPendingBills(req, res){
+    Bill.find({ userId: req.body.userId, pending: true }, function(err, bills) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err)
             res.send(err)
@@ -55,6 +53,7 @@ function addBill(req, res) {
     var formData = req.body.submitForm;
     var isAllBill = req.body.isAllBillChecked;
 	Bill.create({
+        userId: req.body.userId,
 		owner : formData.owner == "" ? "Me" : formData.owner,
 		amount : formData.amount,
 		description : formData.description,
@@ -63,7 +62,7 @@ function addBill(req, res) {
             if (err)
                 res.send(err);
 
-            getViewBills(isAllBill, res);
+            getViewBills(isAllBill, req, res);
 	    });
 };
 
@@ -76,7 +75,7 @@ function removeBill(req, res) {
 		    if (err)
 			    res.send(err);
 
-            getViewBills(isAllBill, res);
+            getViewBills(isAllBill, req, res);
         });
 }
 
@@ -91,7 +90,7 @@ function toggleBillStatus(req, res) {
             if (err)
                 res.send(err);
 
-            getViewBills(isAllBill, res);
+            getViewBills(isAllBill, req, res);
         });
 }
 
@@ -154,14 +153,14 @@ module.exports = function(app, passport) {
 	});
 
 	// get all bills
-	app.get('/api/all_bills', function(req, res) {
+	app.post('/api/all_bills', function(req, res) {
 
 		// In case of bill route, call getBill()
-		getAllBills(res);
+		getAllBills(req, res);
 	});
 
-    app.get('/api/pending_bills', function(req, res) {
-        getPendingBills(res);
+    app.post('/api/pending_bills', function(req, res) {
+        getPendingBills(req, res);
     });
 
 	// route to handle all angular requests

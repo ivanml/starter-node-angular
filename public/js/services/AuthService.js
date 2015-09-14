@@ -3,18 +3,19 @@ angular.module('AuthService', [])
 
         return {
 
-            setCredentials : function(email, passWord) {
-                var authdata = email + ':' + passWord;
+            setCredentials : function(user) {
+                //var authdata = user.local.email + ':' + user.local.passWord;
 
                 $rootScope.globals = {
+                    isLoggedIn: true,
                     currentUser: {
-                        isLoggedIn: true,
-                        email: email,
-                        authdata: authdata
+                        userId: user._id,
+                        email: user.local.email
+                        //authdata: authdata
                     }
                 };
 
-                $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
+                //$http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
                 $cookieStore.put('globals', $rootScope.globals);
             },
 
@@ -23,13 +24,12 @@ angular.module('AuthService', [])
                 $rootScope.billOptions = { isAllBill: false };
                 $cookieStore.remove('globals');
                 $cookieStore.remove('billOptions');
-                $http.defaults.headers.common.Authorization = 'Basic ';
+                //$http.defaults.headers.common.Authorization = 'Basic ';
             },
 
             login : function(email, passWord, callback) {
                 $http.post('/api/login', { email: email, password: passWord })
                     .success(function(data) {
-                        console.log('>>>>>>>>>>>>>>>>', data.user);
                         var response = { success: true, message: data.status, user: data.user };
                         callback(response);
                     })
@@ -43,7 +43,6 @@ angular.module('AuthService', [])
             signup : function(email, passWord, callback) {
                 $http.post('/api/signup', { email: email, password: passWord })
                     .success(function(data) {
-                        console.log('++++++++++++++++', data.user);
                         var response = { success: true, message: data.status, user: data.user };
                         callback(response);
                     })

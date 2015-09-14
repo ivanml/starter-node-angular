@@ -1,19 +1,3 @@
-/*// grab the mongoose module
-var mongoose = require('mongoose');
-
-// define our user model
-// module.exports allows us to pass this to other files when it is called
-module.exports = mongoose.model('User', {
-    username: String,
-    password: String,
-    firstname: {type: String, default: ''},
-    lastname: {type: String, default: ''},
-    email: {type: String, default: 'nobody@unused.com'},
-    gender: {type: String, default: 'M'},
-    address: {type: String, defalut: ''},
-    add_date : {type: Date, default: Date.now}
-});*/
-
 // load the things we need
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');

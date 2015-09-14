@@ -12,7 +12,7 @@ angular.module('AuthCtrl', [])
 
             Auth.login($scope.email, $scope.passWord, function(response) {
                 if (response.success) {
-                    Auth.setCredentials($scope.email, $scope.passWord);
+                    Auth.setCredentials(response.user);
                     Flash.Success(response.message, true);
                     $location.path('/');
                 } else {
@@ -28,7 +28,7 @@ angular.module('AuthCtrl', [])
 
             Auth.signup($scope.email, $scope.passWord, function(response) {
                 if (response.success) {
-                    Auth.setCredentials($scope.email, $scope.passWord);
+                    Auth.setCredentials(response.user);
                     Flash.Success(response.message, true);
                     $location.path('/');
                 } else {
